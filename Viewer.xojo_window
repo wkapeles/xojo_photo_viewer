@@ -58,7 +58,7 @@ Begin Window Viewer
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      Scope           =   2
+      Scope           =   0
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   0
@@ -174,43 +174,7 @@ End
 #tag Events photos
 	#tag Event
 		Sub Open()
-		  // populate lb with list of photos, sort name asc
-		  
-		  Dim dbFile As FolderItem
-		  Dim db As New SQLiteDatabase
-		  dbFile = GetFolderItem("photos.sqlite")
-		  db.DatabaseFile = dbFile
-		  If db.Connect Then
-		    // Check for database records.  If none, dialog notifiying user of new test instance
-		    Dim rs As RecordSet
-		    rs = db.SQLSelect("SELECT id_reference, file_name FROM photos ORDER BY file_name")
-		    
-		    If db.Error Then
-		      MsgBox("Error: " + db.ErrorMessage)
-		      Return
-		    End If
-		    
-		    If rs.RecordCount > 0 Then
-		      photos.DeleteAllRows
-		      While Not rs.EOF
-		        photos.AddRow(rs.IdxField(2).StringValue)
-		        photos.RowTag(photos.LastIndex) = rs.IdxField(1).StringValue
-		        rs.MoveNext
-		      Wend
-		      
-		    Else
-		      photos.DeleteAllRows
-		      Return
-		    End If
-		    
-		  Else
-		    MsgBox("The database couldn't be opened. If this continues, please contact the developer.  Error: " + db.ErrorMessage)
-		    Return
-		  End If
-		  
-		  
-		  
-		  
+		  App.populatePhotoLB
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -245,25 +209,70 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
+#tag Events photoViewer
+	#tag Event
+		Sub DropObject(obj As DragItem, action As Integer)
+		  If Obj.PictureAvailable Then
+		    Me.Image = obj.Picture
+		    //Dim fileName As String = obj.Text
+		    //Dim photoSave As String
+		    //// save new picture in database
+		    //Dim dbFile As FolderItem
+		    //Dim db As New SQLiteDatabase
+		    //dbFile = GetFolderItem("photos.sqlite")
+		    //db.DatabaseFile = dbFile
+		    //If db.Connect Then
+		    //db.SQLExecute("BEGIN TRANSACTION")
+		    //photoSave = "INSERT INTO photos (file_name) VALUES ('"+ fileName +"')"
+		    //db.SQLExecute(photoSave)
+		    //If db.Error Then
+		    //MsgBox("Error: " + db.ErrorMessage)
+		    //db.Rollback
+		    //Return 
+		    //Else
+		    //db.Commit
+		    //End If
+		    //
+		    //If db.Error Then
+		    //MsgBox("Error: " + db.ErrorMessage)
+		    //Return 
+		    //Else
+		    //Dim photoFile As New FolderItem 
+		    //photoFile = photoViewer.Image
+		    //Dim iString As String = "UPDATE photos SET photo_file = '"+ photoFile +"'"
+		    //db.SQLExecute(iString)
+		    //If db.Error Then
+		    //MsgBox("Error: " + db.ErrorMessage)
+		    //db.Rollback
+		    //Return 
+		    //Else
+		    //db.Commit
+		    //app.populatePhotoLB
+		    //End If
+		    //
+		    //Return 
+		    //End If
+		    //
+		    //End If
+		  End If
+		  
+		  
+		  
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.AcceptPictureDrop
+		  Me.AcceptFileDrop("image/jpeg")
+		  Me.AcceptFileDrop("image/PNG")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events addB
 	#tag Event
 		Sub Action()
-		  Dim jpegType As New FileType
-		  jpegType.Name = "image/jpeg"
-		  jpegType.MacType = "JPEG"
-		  jpegType.MacCreator = "prvw"
-		  jpegType.Extensions = "jpg;jpeg"
 		  
-		  Dim pngType As New FileType
-		  pngType.Name = "image/png"
-		  pngType.MacType = "PNG "
-		  pngType.MacCreator = "ogle"
-		  pngType.Extensions = "png"
-		  
-		  Dim f As FolderItem
-		  
-		  //using the addition and conversion operators...
-		  f = GetOpenFolderItem( jpegType + pngType )
 		End Sub
 	#tag EndEvent
 #tag EndEvents

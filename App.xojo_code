@@ -31,6 +31,49 @@ Inherits Application
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Sub populatePhotoLB()
+		  // populate lb with list of photos, sort name asc
+		  
+		  Dim dbFile As FolderItem
+		  Dim db As New SQLiteDatabase
+		  dbFile = GetFolderItem("photos.sqlite")
+		  db.DatabaseFile = dbFile
+		  If db.Connect Then
+		    // Check for database records.  If none, dialog notifiying user of new test instance
+		    Dim rs As RecordSet
+		    rs = db.SQLSelect("SELECT id_reference, file_name FROM photos ORDER BY file_name")
+		    
+		    If db.Error Then
+		      MsgBox("Error: " + db.ErrorMessage)
+		      Return
+		    End If
+		    
+		    If rs.RecordCount > 0 Then
+		      Viewer.photos.DeleteAllRows
+		      While Not rs.EOF
+		        Viewer.photos.AddRow(rs.IdxField(2).StringValue)
+		        Viewer.photos.RowTag(viewer.photos.LastIndex) = rs.IdxField(1).StringValue
+		        rs.MoveNext
+		      Wend
+		      
+		    Else
+		      Viewer.photos.DeleteAllRows
+		      Return
+		    End If
+		    
+		  Else
+		    MsgBox("The database couldn't be opened. If this continues, please contact the developer.  Error: " + db.ErrorMessage)
+		    Return
+		  End If
+		  
+		  
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+
 	#tag Constant, Name = kEditClear, Type = String, Dynamic = False, Default = \"&Delete", Scope = Public
 		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"&Delete"
 		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"&Delete"
@@ -46,5 +89,7 @@ Inherits Application
 	#tag EndConstant
 
 
+	#tag ViewBehavior
+	#tag EndViewBehavior
 End Class
 #tag EndClass
