@@ -59,7 +59,7 @@ End
 	#tag Event
 		Sub DropObject(obj As DragItem, action As Integer)
 		  If Obj.PictureAvailable Then
-		    Me.Image = obj.Picture
+		    Me.Image = obj.Picture.ScaleMBS( Viewer.Width, viewer.Height, False, 0)
 		  End If
 		  
 		  
