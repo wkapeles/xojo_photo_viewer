@@ -26,58 +26,6 @@ Begin Window Viewer
    Title           =   "Photo Viewer"
    Visible         =   True
    Width           =   700
-   Begin Listbox photos
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
-      Bold            =   False
-      Border          =   True
-      ColumnCount     =   1
-      ColumnsResizable=   False
-      ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   -1
-      Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
-      HeadingIndex    =   -1
-      Height          =   380
-      HelpTag         =   ""
-      Hierarchical    =   False
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      RequiresSelection=   False
-      Scope           =   0
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      ShowDropIndicator=   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   64
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   167
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
-   End
    Begin ImageWell photoViewer
       AutoDeactivate  =   True
       Enabled         =   True
@@ -86,7 +34,7 @@ Begin Window Viewer
       Image           =   0
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   199
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -96,74 +44,10 @@ Begin Window Viewer
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   64
+      Top             =   20
       Transparent     =   False
       Visible         =   True
-      Width           =   481
-   End
-   Begin PushButton addB
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Add Photo"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   456
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin PushButton delB
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Delete"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   107
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   456
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
+      Width           =   660
    End
 End
 #tag EndWindow
@@ -171,89 +55,11 @@ End
 #tag WindowCode
 #tag EndWindowCode
 
-#tag Events photos
-	#tag Event
-		Sub Open()
-		  App.populatePhotoLB
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function CellClick(row as Integer, column as Integer, x as Integer, y as Integer) As Boolean
-		  Dim fname As String = photos.cell(row,column)
-		  
-		  Dim dbFile As FolderItem
-		  Dim db As New SQLiteDatabase
-		  dbFile = GetFolderItem("photos.sqlite")
-		  db.DatabaseFile = dbFile
-		  If db.Connect Then
-		    Dim rs As RecordSet
-		    rs = db.SQLSelect("SELECT photo_file FROM photos WHERE file_name = '"+ fname +"'")
-		    
-		    If db.Error Then
-		      MsgBox("Error: " + db.ErrorMessage)
-		      Return False
-		    End If
-		    
-		    If rs.RecordCount > 0 Then
-		      Dim photo As Picture = rs.IdxField(1).PictureValue
-		      photoViewer.Image = photo
-		      Return True
-		    End If
-		    
-		  Else
-		    MsgBox("The database couldn't be opened. If this continues, please contact the developer.  Error: " + db.ErrorMessage)
-		    Return False
-		  End If
-		  
-		  
-		End Function
-	#tag EndEvent
-#tag EndEvents
 #tag Events photoViewer
 	#tag Event
 		Sub DropObject(obj As DragItem, action As Integer)
 		  If Obj.PictureAvailable Then
 		    Me.Image = obj.Picture
-		    //Dim fileName As String = obj.Text
-		    //Dim photoSave As String
-		    //// save new picture in database
-		    //Dim dbFile As FolderItem
-		    //Dim db As New SQLiteDatabase
-		    //dbFile = GetFolderItem("photos.sqlite")
-		    //db.DatabaseFile = dbFile
-		    //If db.Connect Then
-		    //db.SQLExecute("BEGIN TRANSACTION")
-		    //photoSave = "INSERT INTO photos (file_name) VALUES ('"+ fileName +"')"
-		    //db.SQLExecute(photoSave)
-		    //If db.Error Then
-		    //MsgBox("Error: " + db.ErrorMessage)
-		    //db.Rollback
-		    //Return 
-		    //Else
-		    //db.Commit
-		    //End If
-		    //
-		    //If db.Error Then
-		    //MsgBox("Error: " + db.ErrorMessage)
-		    //Return 
-		    //Else
-		    //Dim photoFile As New FolderItem 
-		    //photoFile = photoViewer.Image
-		    //Dim iString As String = "UPDATE photos SET photo_file = '"+ photoFile +"'"
-		    //db.SQLExecute(iString)
-		    //If db.Error Then
-		    //MsgBox("Error: " + db.ErrorMessage)
-		    //db.Rollback
-		    //Return 
-		    //Else
-		    //db.Commit
-		    //app.populatePhotoLB
-		    //End If
-		    //
-		    //Return 
-		    //End If
-		    //
-		    //End If
 		  End If
 		  
 		  
@@ -266,13 +72,6 @@ End
 		  Me.AcceptPictureDrop
 		  Me.AcceptFileDrop("image/jpeg")
 		  Me.AcceptFileDrop("image/PNG")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events addB
-	#tag Event
-		Sub Action()
-		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
